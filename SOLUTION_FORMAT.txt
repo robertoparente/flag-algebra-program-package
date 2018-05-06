@@ -1,0 +1,146 @@
+This file describes the two solution formats used by the programs SDPgen, SDPsolver, SDProunder, SDPchecker.
+
+The first format is called the matrix format and is of the following form:
+==============================================================================================================
+Matrix format solution
+p
+n
+O1
+C1
+O2
+C2
+...
+On
+Cn
+m
+F1
+F2
+...
+Fm
+Conj
+Prec
+Obt
+T
+t1
+t2
+...
+tT
+nf1
+F11
+F12
+...
+Flnf1
+nf2
+F21
+F22
+...
+F2nf2
+...
+nfT
+FT1
+FT2
+...
+FTnfT
+r1 r2 ... rT
+M
+==============================================================================================================
+
+1 - It starts with the string "Matrix format solution".
+2 - It is followed by a parameter p which is 0 for a maximization problem and 1 for a minimization problem
+3 - It is followed by the number n of objects in the optimization objective.
+4 - It is followed by the list of objects and their coefficients (O1 C1 ... On Cn).
+5 - These are followed by the number m of forbidden objects.
+6 - It is followed by the list of forbidden objects (F1 ... Fm).
+7 - These are followed by the conjectured value Conj of the optimal value (used only for automatic modes).
+8 - It is followed by the precision Prec used for automatic modes.
+9 - It is followed by the actual value Obt of the solution.
+10 - It is followed by the number of flag algebra types T used.
+11 - It is followed by a list for each type i of the following form:
+11 - a - It starts with the number nfi of flags for type i.
+11 - b - Followed by the list of flags (Fi1 ... Finfi) of the type i.
+12 - These are followed by a list (r1 ... rT) of rescaling factors (meaning that the matrix corresponding to
+type i is printed multiplied by a factor of ri).
+13 - These are followed by the matrix M of the solution in sparse format, which is a list of entries of the form
+b i j e
+where b is the block (the i-th block corresponds to flags of type i);
+      i is the row in block b;
+      j is the column in block b;
+      e is the value of the entry at (i,j) in block b.
+
+Note: all spaces/tabs/newlines are interpreted simply as spaces so are interchangeable in the format above
+(except in the starting string "Matrix format solution").
+
+==============================================================================================================
+==============================================================================================================
+
+The second format is called the squares format and is of the following form:
+==============================================================================================================
+Squares format solution
+p
+n
+O1
+C1
+O2
+C2
+...
+On
+Cn
+m
+F1
+F2
+...
+Fm
+Conj
+Prec
+Obt
+T
+t1
+t2
+...
+tT
+nf1
+F11
+F12
+...
+Flnf1
+nf2
+F21
+F22
+...
+F2nf2
+...
+nfT
+FT1
+FT2
+...
+FTnfT
+r1 r2 ... rT
+M
+==============================================================================================================
+
+This format works exactly the same way as the matrix format, except for only two differences:
+1 - It starts with the string "Squares format solution".
+2 - The matrix M instead represents the spectral decomposition of the solution. It is still given in the
+sparse format, which is a list of entries of the form
+b i j e
+but now b stands for the block of the matrix (block i corresponds to type i);
+        i stands for the index of the eigenpair;
+	j if equal to 0, stands for the eigenvalue; if greater than zero stands for the index of the entry of
+          the normalized eigenvector
+	e is the value
+
+Example the block matrix:
+1 1
+1 1
+    2 1
+    1 2
+would be (approximately) represented as
+1 1 0 2
+1 1 1 0.70710678118654752440084436210485
+1 1 2 0.70710678118654752440084436210485
+2 1 0 1
+2 1 1 0.70710678118654752440084436210485
+2 1 2 -0.70710678118654752440084436210485
+2 2 0 3
+2 2 1 0.70710678118654752440084436210485
+2 2 2 0.70710678118654752440084436210485
