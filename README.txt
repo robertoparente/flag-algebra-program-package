@@ -122,11 +122,33 @@ If you choose SDPsolver, solution files will be produced automatically.
 After you run one of SDPgen + CSDP or SDPsolver, you may want to round the obtained solution using
 SDProunder. It requires a solution either in matrix format or squares format (see SOLUTION_FORMAT.txt) that
 can be automatically produced by these programs. However, if the solution is too large, SDProunder may not be
-able to round the solution (either because of hardness of calculations or insufficient memory). SDPsolver has
-functionalities offered right after a solution is found to try to reduce the size of the solution
-automatically. Note also that SDProunder tries to find a way to round the solution to a rational one; so if
-the exact solution had irrational entries (this can happen even if the problem was rational), SDProunder is
-bound to fail.
+able to round the solution (either because of hardness of calculations or insufficient memory, the latter is
+indicated by the program terminating under the exception std::bad_alloc). SDPsolver has functionalities
+offered right after a solution is found to try to reduce the size of the solution automatically. Note also
+that SDProunder tries to find a way to round the solution to a rational one; so if the exact solution had
+irrational entries (this can happen even if the problem was rational), SDProunder is bound to fail.
+
+To round the problems, SDProunder asks for several parameters. There is very little intuition as to what are
+proper values for these, nevertheless here are some brief explanation as to their meaning and some tipical
+values used for our application.
+- epsilon 1: precision of positive semidefinite restrictions.
+-- the program will force any eigenvalue less than epsilon 1 to be 0 in its attempt to round the program.
+-- typical value range: 1e-2 to 1e-6.
+- epsilon 2: precision for conjectured value rounding.
+-- the program will force the objective values that are less than epsilon 2 far away from the conjectured
+value to be the conjectured value.
+-- typical value range: 1e-2 to 1e-6
+- epsilon 3: precision for matrix value rounding
+-- the program will round free variables to the solution values up to epsilon 3 precision
+-- typical value range: 1e-2 to 1e-6
+- nRoundEigen: maximum denominator for eigenvector rounding.
+-- the program will attempt to round eigenvector entries using denominators up to the factorial of
+nRoundEigen.
+-- typical value range: 10 to 20.
+
+If SDProunder fails to round the problem, it will provide suggestions on how to change these parameters for a
+better attempt at rounding. Be advised that the smaller the value of epsilon 3 and the larger the value of
+nRoundEigen, the greater will be the memory usage of the program.
 
 The typical process of trying to find a bound using this program package is the following:
 1 - Run SDPsolver until it finds a solution.
@@ -140,6 +162,7 @@ are not necessarily easier to round, just tipically easier).
 It should be noted that even running the same problems as the ones in the paper on these programs will most
 likely not yield the same solution matrices as in the paper since these depend both on CSDP (or whatever
 semidefinite solver is being used) and sometimes also in fine tuning using SDPgen.
+
 
 ==============================================================================================================
 
